@@ -195,20 +195,36 @@ void attach_on_exit ( void *fun )
     myAction.sa_handler = fun;
     sigemptyset ( &myAction.sa_mask );
     myAction.sa_flags = SA_RESTART | SA_SIGINFO;
-    sigaction ( SIGSEGV, &myAction, NULL );
-    sigaction ( SIGUSR1, &myAction, NULL );
-    sigaction ( SIGFPE, &myAction, NULL );
-    sigaction ( SIGILL, &myAction, NULL );
-    sigaction ( SIGBUS, &myAction, NULL );
-    sigaction ( SIGABRT, &myAction, NULL );
-    sigaction ( SIGSYS, &myAction, NULL );
-    sigaction ( SIGQUIT, &myAction, NULL );
-    sigaction ( SIGTRAP, &myAction, NULL );
-    sigaction ( SIGXCPU, &myAction, NULL );
-    sigaction ( SIGXFSZ, &myAction, NULL );
-    sigaction ( SIGPIPE, &myAction, NULL );
 
+    sigaction ( SIGHUP, &myAction, NULL ); /// 终端挂起
     sigaction ( SIGINT, &myAction, NULL ); /// CTRL+C
+    sigaction ( SIGCHLD, &myAction, NULL ); /// 子进程退出
+
+    sigaction ( SIGQUIT, &myAction, NULL ); //键盘的退出键
+    sigaction ( SIGILL, &myAction, NULL ); //非法指令
+    sigaction ( SIGABRT, &myAction, NULL ); //由 abort(3) 发出的退出指令
+    sigaction ( SIGFPE, &myAction, NULL ); //浮点异常
+
+    sigaction ( SIGSEGV, &myAction, NULL ); //无效的内存引用
+    sigaction ( SIGALRM, &myAction, NULL ); //由 alarm(2) 发出的信号
+    sigaction ( SIGTERM, &myAction, NULL ); //终止信号
+    sigaction ( SIGUSR1, &myAction, NULL ); //用户自定义
+    sigaction ( SIGUSR2, &myAction, NULL ); //用户自定义
+
+    sigaction ( SIGBUS, &myAction, NULL ); //总线错误（内存访问错误）
+    sigaction ( SIGSYS, &myAction, NULL ); //非法的系统调用
+
+    sigaction ( SIGTRAP, &myAction, NULL ); //跟踪/断点自陷
+    sigaction ( SIGXCPU, &myAction, NULL ); //超过CPU时限
+    sigaction ( SIGXFSZ, &myAction, NULL ); //超过文件长度限制
+    sigaction ( SIGIOT, &myAction, NULL ); //IOT自陷
+
+    /// 忽略以下信号
+    myAction.sa_handler = SIG_IGN;
+    sigaction ( SIGPIPE, &myAction, 0 );
+    sigaction ( SIGTSTP, &myAction, 0 ); //控制终端（tty）上按下停止键
+    sigaction ( SIGTTIN, &myAction, 0 ); //后台进程企图从控制终端读
+    sigaction ( SIGTTOU, &myAction, 0 ); //后台进程企图从控制终端写
 }
 
 static int _workerprocess[200];
